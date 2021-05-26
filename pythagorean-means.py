@@ -212,7 +212,7 @@ class PythagoreanMeans(Scene):
 
         gm = TexMobject(r'\text{GM}')
         gm.set_color(TEAL)
-        gm.move_to(3*DOWN)
+        gm.move_to(3*DOWN+2*LEFT)
 
         rhs_1 = TexMobject(
             r'=\sqrt{\left(%s\right)^2-\left(%s\right)^2}' % (avg, half_diff)
@@ -229,37 +229,17 @@ class PythagoreanMeans(Scene):
         rhs_intermediate.set_color(TEAL)
         rhs_intermediate.next_to(gm, RIGHT)
 
-        rhs_final = TexMobject(r'{\rm GM}', r'=\sqrt{ab}').set_color(TEAL)
+        rhs_final = TexMobject(r'=\sqrt{ab}').set_color(TEAL)
         rhs_final.next_to(gm, RIGHT)
 
         # Get individual pieces of above equations
-        a_group_1 = VGroup(rhs_1[0][4], rhs_intermediate[0][3])
-        b_group_1 = VGroup(rhs_1[0][6], rhs_intermediate[0][6])
-        pluses_1 = VGroup(rhs_1[0][5], rhs_intermediate[0][5])
-        a_group_2 = VGroup(rhs_1[0][13], rhs_intermediate[0][15])
-        b_group_2 = VGroup(rhs_1[0][15], rhs_intermediate[0][18])
-        minus_to_plus = VGroup(rhs_1[0][14], rhs_intermediate[0][17])
-        plus_2ab = VGroup(*[rhs_intermediate[0][i] for i in range(8, 12)])
-        minus_2ab = VGroup(*[rhs_intermediate[0][i] for i in range(20, 24)])
-        denoms_1 = VGroup(
-            VGroup(*[rhs_1[0][i] for i in [7,8]]),
-            VGroup(*[rhs_intermediate[0][i] for i in [12,13]])
-        )
-        denoms_2 = VGroup(
-            VGroup(*[rhs_1[0][i] for i in [16,17]]),
-            VGroup(*[rhs_intermediate[0][i] for i in [24,25]])
-        )
-
-        square_roots = VGroup(
-            VGroup(*[rhs_1[0][i] for i in range(2)]),
-            VGroup(*[rhs_intermediate[0][i] for i in range(2)])
-        )
-        squared_1 = VGroup(*[rhs_1[0][i] for i in [9,-1]])
-        squared_2 = VGroup(
-            VGroup(*[rhs_intermediate[0][i] for i in [3, 6]]),
-            VGroup(*[rhs_intermediate[0][i] for i in [3, 6]])
-        )
-
+        square_roots = VGroup(VGroup(*[rhs_1[0][i] for i in [1,2]]),
+            VGroup(*[rhs_intermediate[0][i] for i in [1,2]]))
+        term_1 = VGroup(VGroup(*[rhs_1[0][i] for i in range(3,11)]),
+            VGroup(*[rhs_intermediate[0][i] for i in range(3,14)]))
+        minuses = VGroup(rhs_1[0][11], rhs_intermediate[0][14])
+        term_2 = VGroup(VGroup(*[rhs_1[0][i] for i in range(12,20)]),
+            VGroup(*[rhs_intermediate[0][i] for i in range(15,26)]))
 
         self.gm_formula = TextMobject('GM', r' = geometric mean').set_color(TEAL)
         self.gm_formula.to_edge(LEFT)
@@ -271,16 +251,24 @@ class PythagoreanMeans(Scene):
         self.play(ReplacementTransform(label_copy, gm))
         self.play(Write(rhs_1))
         self.wait()
-        self.play(ReplacementTransform(square_roots[0], square_roots[1]))
-        items = [a_group_1, b_group_1, a_group_2, b_group_2, pluses_1,
-            minus_to_plus, denoms_1, denoms_2]
+        items = [square_roots, term_1, minuses, term_2]
         self.play(*[ReplacementTransform(item[0], item[1]) for item in items])
-        self.play(Write(plus_2ab), Write(minus_2ab))
         self.wait()
-        # self.play(ApplyMethod(gm_formula_final[0].move_to, self.gm_formula[0].get_center()),
-        #     FadeOut(gm_formula_final[1]))
-        # self.play(Write(self.gm_formula[1]))
-        # self.play(FadeOut(brace_gm), FadeOut(label_gm_group))
+        ab_final = VGroup(rhs_final[0][-1], rhs_final[0][-2])
+        square_root_final = VGroup(rhs_final[0][1], rhs_final[0][2])
+        ab_copies = VGroup(
+            *[VGroup(term[1][-3], term[1][-4]) for term in [term_1, term_2]]
+        ).copy()
+        self.play(
+            FadeOut(rhs_intermediate),
+            *[ApplyMethod(ab.move_to, ab_final) for ab in ab_copies],
+            ReplacementTransform(square_roots[1], square_root_final),
+            ReplacementTransform(rhs_1[0][0], rhs_final[0][0])
+        )
+        self.play(ApplyMethod(gm.move_to, self.gm_formula[0].get_center()),
+            FadeOut(rhs_final), FadeOut(ab_copies))
+        self.play(Write(self.gm_formula[1]))
+        self.play(FadeOut(brace_gm), FadeOut(label_gm_group))
         self.wait(2)
 
     def get_harmonic_mean(self):
