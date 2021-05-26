@@ -121,7 +121,7 @@ class PythagoreanMeans(Scene):
         self.wait()
         self.play(FadeIn(diff_line))
         self.play(GrowFromCenter(brace_diff), Write(label_diff))
-        self.wait()
+        self.wait(2)
         self.play(ReplacementTransform(label_diff, new_label_diff))
         self.wait(2)
         self.play(FadeOut(brace_diff), FadeOut(new_label_diff))
