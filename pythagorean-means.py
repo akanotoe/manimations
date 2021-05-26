@@ -392,4 +392,4 @@ class PythagoreanMeans(Scene):
 
         self.play(Write(form_brace))
         self.play(Write(form_label))
-        self.wait(2)
+        self.wait(4)
