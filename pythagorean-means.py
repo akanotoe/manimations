@@ -25,7 +25,6 @@ class CheckFormula2(CheckFormulaByTXT):
         )[0]
     }
 
-
 class PythagoreanMeans(Scene):
     def construct(self):
         self.get_lines()
@@ -34,7 +33,7 @@ class PythagoreanMeans(Scene):
         self.get_quadratic_mean()
         self.get_geometric_mean()
         self.animate_gm_formula()
-        # self.get_harmonic_mean()
+        self.get_harmonic_mean()
 
     def get_lines(self):
         self.a = Line([0.,0.,0.], [LINE_LENGTH/(1.+AB_PROPORTION),0.,0.])
@@ -139,27 +138,6 @@ class PythagoreanMeans(Scene):
         label_diff = brace_diff.get_tex(
             r'\dfrac{a+b}{2}', '-b').set_color(BLUE)
         new_label_diff = brace_diff.get_tex(r'\dfrac{a-b}{2}').set_color(BLUE)
-        qm_slope = self.qm_line.get_slope()
-        brace_qm = Brace(self.qm_line, (UP-RIGHT*qm_slope)/(1.+ qm_slope**2), buff = SMALL_BUFF)
-        label_qm = brace_qm.get_text('QM').set_color(YELLOW)
-        label_qm.move_to(brace_qm.get_center() + (1+SMALL_BUFF)*RIGHT/2)
-        label_copy = label_qm.copy()
-        quad_formula = TextMobject('QM',
-            r' $=\sqrt{\left(\dfrac{a+b}{2}\right)^2 + \left(\dfrac{a-b}{2}\right)^2}$'
-            ).set_color(YELLOW)
-        quad_formula.move_to(3*DOWN)
-        quad_formula_intermediate = TextMobject('QM',
-            r' $=\sqrt{\dfrac{a^2 + b^2 + 2ab}{4} + \dfrac{a^2 + b^2 - 2ab}{4}}$'
-            ).set_color(YELLOW)
-        quad_formula_intermediate.move_to(3*DOWN)
-        quad_formula_final = TextMobject('QM',
-            r' $=\sqrt{\dfrac{a^2 + b^2}{2}}$'
-            ).set_color(YELLOW)
-        quad_formula_final.move_to(3*DOWN)
-        self.quad_formula = TextMobject(r'QM', ' = quadratic mean').set_color(YELLOW)
-        self.quad_formula.to_edge(LEFT)
-        self.quad_formula.shift(DOWN * 2 + RIGHT * SMALL_BUFF)
-
         # Animate
         self.play(ShowCreation(self.qm_line))
         self.wait()
@@ -169,23 +147,80 @@ class PythagoreanMeans(Scene):
         self.play(ReplacementTransform(label_diff, new_label_diff))
         self.wait(2)
         self.play(FadeOut(brace_diff), FadeOut(new_label_diff))
-        self.play(Write(label_qm))
-        self.wait()
-        self.play(ApplyMethod(label_copy.move_to, quad_formula[0].get_center()))
-        self.add(quad_formula[0])
-        self.remove(label_copy)
-        self.play(Write(quad_formula[1]))
-        self.wait(2)
-        self.play(ReplacementTransform(quad_formula[0], quad_formula_intermediate[0]),
-        ReplacementTransform(quad_formula[1], quad_formula_intermediate[1]))
-        self.wait(2)
-        self.play(ReplacementTransform(quad_formula_intermediate[0],
-            quad_formula_final[0]), ReplacementTransform(quad_formula_intermediate[1],
-                quad_formula_final[1])
+
+        # Setup formula animation
+        qm_slope = self.qm_line.get_slope()
+        brace_qm = Brace(
+            self.qm_line,
+            (UP-RIGHT*qm_slope)/(1.+ qm_slope**2),
+            buff = SMALL_BUFF
+        ).set_color(YELLOW)
+        label_qm = brace_qm.get_text('QM').set_color(YELLOW)
+        label_qm.move_to(brace_qm.get_center() + (1+SMALL_BUFF)*RIGHT/2)
+        label_copy = label_qm.copy()
+        avg = r'\dfrac{a+b}{2}'
+        half_diff = r'\dfrac{a-b}{2}'
+
+        qm = TexMobject(r'\text{QM}')
+        qm.set_color(YELLOW)
+        qm.move_to(3*DOWN+2*LEFT)
+
+        rhs_1 = TexMobject(
+            r'=\sqrt{\left(%s\right)^2+\left(%s\right)^2}' % (avg, half_diff)
+        )
+        rhs_1.set_color(YELLOW)
+        rhs_1.next_to(qm, RIGHT)
+
+        rhs_intermediate = TexMobject(
+            r'=\sqrt{%s + %s}' % (
+                r'\dfrac{a^2 + b^2 + 2ab}{4}',
+                r'\dfrac{a^2 + b^2 - 2ab}{4}'
             )
+        )
+        rhs_intermediate.set_color(YELLOW)
+        rhs_intermediate.next_to(qm, RIGHT)
+
+        rhs_final = TexMobject(
+            r'=\sqrt{{{a^2 + b^2} \over 2}}'
+        ).set_color(YELLOW)
+        rhs_final.next_to(qm, RIGHT)
+
+        # Get individual pieces of above equations
+        square_roots = VGroup(VGroup(*[rhs_1[0][i] for i in [1,2]]),
+            VGroup(*[rhs_intermediate[0][i] for i in [1,2]]))
+        term_1 = VGroup(VGroup(*[rhs_1[0][i] for i in range(3,11)]),
+            VGroup(*[rhs_intermediate[0][i] for i in range(3,14)]))
+        minuses = VGroup(rhs_1[0][11], rhs_intermediate[0][14])
+        term_2 = VGroup(VGroup(*[rhs_1[0][i] for i in range(12,20)]),
+            VGroup(*[rhs_intermediate[0][i] for i in range(15,26)]))
+
+        self.quad_formula = TextMobject(
+            r'QM', ' = quadratic mean'
+        ).set_color(YELLOW)
+        self.quad_formula.to_edge(LEFT)
+        self.quad_formula.shift(DOWN * 2 + RIGHT * SMALL_BUFF)
+
+        # Animate
+        self.play(FadeIn(label_qm))
+        self.wait()
+        self.play(ReplacementTransform(label_copy, qm))
+        self.play(Write(rhs_1))
+        self.wait()
+        items = [square_roots, term_1, minuses, term_2]
+        self.play(*[ReplacementTransform(item[0], item[1]) for item in items])
+        self.wait()
+        qm_final = VGroup(*rhs_final[0][3:])
+        square_root_final = VGroup(rhs_final[0][1], rhs_final[0][2])
+        term_copies = VGroup(term_1.copy(), term_2.copy())
+        self.play(
+            FadeOut(rhs_intermediate),
+            ReplacementTransform(term_copies, VGroup(*rhs_final[0][3:])),
+            ReplacementTransform(square_roots[1], square_root_final),
+            ReplacementTransform(rhs_1[0][0], rhs_final[0][0])
+        )
         self.wait(2)
-        self.play(ReplacementTransform(quad_formula_final[0], self.quad_formula[0]),
-                    FadeOut(quad_formula_final[1]))
+        self.play(ApplyMethod(qm.move_to, self.quad_formula[0].get_center()),
+            FadeOut(rhs_final))
         self.play(Write(self.quad_formula[1]))
         self.play(FadeOut(diff_line), FadeOut(label_qm))
         self.wait(2)
