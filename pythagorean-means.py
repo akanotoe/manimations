@@ -1,29 +1,9 @@
 from manimlib.imports import *
-from projects.check_formula_by_txt import *
 
 AB_PROPORTION = 0.25
 LINE_LENGTH = 6
 COMPASS_RUN_TIME = 3
 COMPASS_RATE = linear
-
-class CheckFormula(CheckFormulaByTXT):
-    CONFIG = {
-        'text': TexMobject(
-                    r'=\sqrt{%s - %s}' % (
-                        r'\dfrac{a^2 + b^2 + 2ab}{4}',
-                        r'\dfrac{a^2 + b^2 - 2ab}{4}'
-                    )
-                )[0]
-    }
-
-class CheckFormula2(CheckFormulaByTXT):
-    CONFIG = {
-        'text': TexMobject(
-            r'=\sqrt{\left(%s\right)^2-\left(%s\right)^2}' % (
-                r'\dfrac{a+b}{2}', r'\dfrac{a-b}{2}'
-            )
-        )[0]
-    }
 
 class PythagoreanMeans(Scene):
     def construct(self):
@@ -34,6 +14,7 @@ class PythagoreanMeans(Scene):
         self.get_geometric_mean()
         self.animate_gm_formula()
         self.get_harmonic_mean()
+        self.label_pythagorean_means()
 
     def get_lines(self):
         self.a = Line([0.,0.,0.], [LINE_LENGTH/(1.+AB_PROPORTION),0.,0.])
@@ -233,9 +214,12 @@ class PythagoreanMeans(Scene):
         gm_length = (self.a.get_length() * self.b.get_length())**0.5
         self.gm_line = Line(self.b.get_start(),
             self.b.get_start()+[0., gm_length, 0.], color = TEAL)
+        self.radius = Line(self.am_line.get_end(), self.gm_line.get_end())
 
         # Animate
         self.play(ShowCreation(self.gm_line))
+        self.wait()
+        self.play(ShowCreation(self.radius))
         self.wait()
 
     def animate_gm_formula(self):
@@ -318,13 +302,12 @@ class PythagoreanMeans(Scene):
 
     def get_harmonic_mean(self):
         # Setup lines and formulae
-        radius = Line(self.am_line.get_end(), self.gm_line.get_end())
         d1 = Dot()
         harmonic_mean = 2./(1/self.a.get_length() + 1/self.b.get_length())
         avg = (self.a.get_length() + self.b.get_length())/2
-        d1.move_to(radius.get_end()/avg*(avg-harmonic_mean))
+        d1.move_to(self.radius.get_end()/avg*(avg-harmonic_mean))
         intersecting_line = Line(d1.get_center(), self.gm_line.get_start())
-        right_angle = RightAngle(intersecting_line, radius,
+        right_angle = RightAngle(intersecting_line, self.radius,
             length = LINE_LENGTH/32., quadrant = (1,-1)
         )
         self.hm_line = Line(d1.get_center(), self.gm_line.get_end(), color = PINK)
@@ -349,13 +332,11 @@ class PythagoreanMeans(Scene):
         am_denom.set_color(RED_A)
 
         # Animate
-        self.play(ShowCreation(radius))
-        self.wait()
         self.play(ShowCreation(intersecting_line), ShowCreation(right_angle))
         self.wait()
         self.play(ShowCreation(self.hm_line))
         self.wait()
-        lines = [self.hm_line, self.gm_line, self.gm_line, radius]
+        lines = [self.hm_line, self.gm_line, self.gm_line, self.radius]
         dests = [HM, gm_denom, gm_num, am_denom]
         for line, dest in zip(lines, dests):
             self.play(ReplacementTransform(line.copy(), dest))
@@ -397,4 +378,18 @@ class PythagoreanMeans(Scene):
             *[FadeOut(item) for item in [hm_denom, equals[0][0],
                 equals[0][1], equals[0][4]]])
         self.play(Write(self.hm_formula[1]))
+        self.wait(2)
+
+    def label_pythagorean_means(self):
+        form_group = VGroup(self.arithmetic_mean, self.quad_formula,
+            self.gm_formula, self.hm_formula
+        )
+        # Make brace so it is drawn top-to-bottom
+        form_brace = Brace(
+            form_group, LEFT, buff = SMALL_BUFF
+        ).flip().next_to(form_group, RIGHT)
+        form_label = form_brace.get_text('Pythagorean means')
+
+        self.play(Write(form_brace))
+        self.play(Write(form_label))
         self.wait(2)
