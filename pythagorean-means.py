@@ -64,7 +64,6 @@ class PythagoreanMeans(Scene):
         self.wait()
 
     def get_arithmetic_mean(self):
-
         # Setup line and labels
         self.am_line = Line(
             self.a.get_start(), self.lines.get_center(),
@@ -75,6 +74,7 @@ class PythagoreanMeans(Scene):
         self.label_mean.set_color(RED_A)
         self.label_am = self.brace_am.get_text(r'AM')
         self.label_am.set_color(RED_A)
+        label_copy = self.label_am.copy()
         self.arithmetic_mean = TextMobject(r'AM', r' = arithmetic mean')
         self.arithmetic_mean.set_color(RED_A)
         self.arithmetic_mean.to_edge(LEFT)
@@ -86,12 +86,9 @@ class PythagoreanMeans(Scene):
         self.wait()
         self.play(ReplacementTransform(self.label_mean, self.label_am))
         self.wait()
-        self.play(
-            ReplacementTransform
-            (self.label_am.copy(),
-                self.arithmetic_mean[0]
-            )
-        )
+        self.play(ApplyMethod(label_copy.move_to, self.arithmetic_mean[0]))
+        self.add(self.arithmetic_mean[0])
+        self.remove(label_copy)
         self.play(Write(self.arithmetic_mean[1]))
         self.wait(2)
         self.play(FadeOut(self.label_am), FadeOut(self.brace_am))
@@ -170,6 +167,7 @@ class PythagoreanMeans(Scene):
         )
         rhs_1.set_color(YELLOW)
         rhs_1.next_to(qm, RIGHT)
+        rhs_1.shift(SMALL_BUFF*UP)
 
         rhs_intermediate = TexMobject(
             r'=\sqrt{%s + %s}' % (
@@ -179,11 +177,13 @@ class PythagoreanMeans(Scene):
         )
         rhs_intermediate.set_color(YELLOW)
         rhs_intermediate.next_to(qm, RIGHT)
+        rhs_intermediate.shift(SMALL_BUFF*UP)
 
         rhs_final = TexMobject(
             r'=\sqrt{{{a^2 + b^2} \over 2}}'
         ).set_color(YELLOW)
         rhs_final.next_to(qm, RIGHT)
+        rhs_final.shift(SMALL_BUFF*UP)
 
         # Get individual pieces of above equations
         square_roots = VGroup(VGroup(*[rhs_1[0][i] for i in [1,2]]),
@@ -203,12 +203,15 @@ class PythagoreanMeans(Scene):
         # Animate
         self.play(FadeIn(label_qm))
         self.wait()
+        self.play(ApplyMethod(label_copy.move_to, qm))
         self.play(ReplacementTransform(label_copy, qm))
         self.play(Write(rhs_1))
         self.wait()
         items = [square_roots, term_1, minuses, term_2]
-        self.play(*[ReplacementTransform(item[0], item[1]) for item in items])
-        self.wait()
+        self.play(*[ReplacementTransform(item[0], item[1]) for item in items],
+            ReplacementTransform(rhs_1[0][0], rhs_intermediate[0][0])
+        )
+        self.wait(2)
         qm_final = VGroup(*rhs_final[0][3:])
         square_root_final = VGroup(rhs_final[0][1], rhs_final[0][2])
         term_copies = VGroup(term_1.copy(), term_2.copy())
@@ -216,7 +219,7 @@ class PythagoreanMeans(Scene):
             FadeOut(rhs_intermediate),
             ReplacementTransform(term_copies, VGroup(*rhs_final[0][3:])),
             ReplacementTransform(square_roots[1], square_root_final),
-            ReplacementTransform(rhs_1[0][0], rhs_final[0][0])
+            ReplacementTransform(rhs_intermediate[0][0], rhs_final[0][0])
         )
         self.wait(2)
         self.play(ApplyMethod(qm.move_to, self.quad_formula[0].get_center()),
@@ -254,6 +257,7 @@ class PythagoreanMeans(Scene):
         )
         rhs_1.set_color(TEAL)
         rhs_1.next_to(gm, RIGHT)
+        rhs_1.shift(SMALL_BUFF*UP)
 
         rhs_intermediate = TexMobject(
             r'=\sqrt{%s - %s}' % (
@@ -263,9 +267,11 @@ class PythagoreanMeans(Scene):
         )
         rhs_intermediate.set_color(TEAL)
         rhs_intermediate.next_to(gm, RIGHT)
+        rhs_intermediate.shift(SMALL_BUFF*UP)
 
         rhs_final = TexMobject(r'=\sqrt{ab}').set_color(TEAL)
         rhs_final.next_to(gm, RIGHT)
+        rhs_final.shift(SMALL_BUFF*UP/2)
 
         # Get individual pieces of above equations
         square_roots = VGroup(VGroup(*[rhs_1[0][i] for i in [1,2]]),
@@ -283,12 +289,15 @@ class PythagoreanMeans(Scene):
         # Animate
         self.play(GrowFromCenter(brace_gm), FadeIn(label_gm_group))
         self.wait()
-        self.play(ReplacementTransform(label_copy, gm))
+        self.play(ApplyMethod(label_copy.move_to, gm))
+        self.add(gm)
+        self.remove(label_copy)
         self.play(Write(rhs_1))
         self.wait()
         items = [square_roots, term_1, minuses, term_2]
-        self.play(*[ReplacementTransform(item[0], item[1]) for item in items])
-        self.wait()
+        self.play(*[ReplacementTransform(item[0], item[1]) for item in items],
+            ReplacementTransform(rhs_1[0][0], rhs_intermediate[0][0]))
+        self.wait(2)
         ab_final = VGroup(rhs_final[0][-1], rhs_final[0][-2])
         square_root_final = VGroup(rhs_final[0][1], rhs_final[0][2])
         ab_copies = VGroup(
@@ -298,8 +307,9 @@ class PythagoreanMeans(Scene):
             FadeOut(rhs_intermediate),
             *[ApplyMethod(ab.move_to, ab_final) for ab in ab_copies],
             ReplacementTransform(square_roots[1], square_root_final),
-            ReplacementTransform(rhs_1[0][0], rhs_final[0][0])
+            ReplacementTransform(rhs_intermediate[0][0], rhs_final[0][0])
         )
+        self.wait(2)
         self.play(ApplyMethod(gm.move_to, self.gm_formula[0].get_center()),
             FadeOut(rhs_final), FadeOut(ab_copies))
         self.play(Write(self.gm_formula[1]))
@@ -361,26 +371,30 @@ class PythagoreanMeans(Scene):
         self.play(ApplyMethod(HM.move_to, prop_form[0][2].get_center()),
             FadeOut(prop_form[0][2])
         )
+        self.wait()
         equals = TexMobject(r'= {2ab \over {a+b}}')
         equals.next_to(HM)
         num = VGroup(*[equals[0][i] for i in [2,3]]).set_color(TEAL)
         denom = VGroup(*[equals[0][i] for i in [1,-1,-2,-3]]).set_color(RED_A)
         self.play(
             ReplacementTransform(GM2, num),
-            ReplacementTransform(prop_form[2][2], equals[0][4])
+            ReplacementTransform(prop_form[2][2], equals[0][4]),
+            ReplacementTransform(prop_form[1], equals[0][0])
         )
         self.play(ReplacementTransform(am_denom, denom))
         self.wait()
         denom = VGroup(equals[0][-3], equals[0][-2], equals[0][-1])
-        hm_denom = TexMobject(r'{1 \over a}', '+', r'{1 \over b}')
+        hm_denom = TexMobject(r'{1 \over a}', '+', r'{1 \over b}').set_color(PINK)
         hm_denom.next_to(equals[0][4], DOWN)
         self.play(*[ApplyMethod(denom[i].move_to, hm_denom[i][-1]) for i in range(3)])
         self.play(Write(hm_denom), FadeOut(equals[0][2]), FadeOut(equals[0][3]),
-            ApplyMethod(equals[0][1].next_to, equals[0][4], UP, buff = 0))
+            ApplyMethod(equals[0][1].next_to, equals[0][4], UP, buff = 0)
+        )
+        self.play(*[ApplyMethod(equals[0][i].set_color, PINK) for i in [0, 1, 4]])
         self.play(*[FadeOut(denom[i]) for i in range(3)])
         self.wait(2)
         self.play(ApplyMethod(HM.move_to, self.hm_formula[0]),
-            *[FadeOut(item) for item in [hm_denom, equals[0][1], equals[0][4],
-                prop_form[1]]])
+            *[FadeOut(item) for item in [hm_denom, equals[0][0],
+                equals[0][1], equals[0][4]]])
         self.play(Write(self.hm_formula[1]))
         self.wait(2)
