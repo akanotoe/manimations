@@ -121,7 +121,7 @@ class PythagoreanMeans(Scene):
         self.wait()
         self.play(FadeIn(diff_line))
         self.play(GrowFromCenter(brace_diff), Write(label_diff))
-        self.wait(2)
+        self.wait(1.5)
         self.play(ReplacementTransform(label_diff, new_label_diff))
         self.wait(2)
         self.play(FadeOut(brace_diff), FadeOut(new_label_diff))
@@ -198,7 +198,9 @@ class PythagoreanMeans(Scene):
         term_copies = VGroup(term_1.copy(), term_2.copy())
         self.play(
             FadeOut(rhs_intermediate),
-            ReplacementTransform(term_copies, VGroup(*rhs_final[0][3:])),
+            *[ReplacementTransform(
+                copy, VGroup(*rhs_final[0][3:])
+            ) for copy in term_copies],
             ReplacementTransform(square_roots[1], square_root_final),
             ReplacementTransform(rhs_intermediate[0][0], rhs_final[0][0])
         )
