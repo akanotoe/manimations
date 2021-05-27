@@ -101,6 +101,10 @@ class PythagoreanMeans(Scene):
             about_point = ORIGIN, run_time = 1, rate_func=smooth))
         self.wait()
 
+        # Show semicircle in -ps option
+        self.semicircle = Arc(
+            radius = LINE_LENGTH/2, start_angle = 0, angle=TAU/2
+        )
         self.add(self.semicircle)
 
     def get_quadratic_mean(self):
