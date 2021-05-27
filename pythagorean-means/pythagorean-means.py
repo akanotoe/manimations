@@ -17,11 +17,8 @@ class PythagoreanMeans(Scene):
         self.label_pythagorean_means()
 
     def get_lines(self):
-        self.a = Line([0.,0.,0.], [self.LINE_LENGTH/(1.+self.AB_PROPORTION),0.,0.])
-        self.b = Line(
-            [self.LINE_LENGTH/(1.+self.AB_PROPORTION),0.,0.],
-            [self.LINE_LENGTH,0.,0.]
-        )
+        self.a = Line(ORIGIN, [self.LINE_LENGTH/(1.+self.AB_PROPORTION),0.,0.])
+        self.b = Line(self.a.get_end(), [self.LINE_LENGTH,0.,0.])
         self.lines = VGroup(self.a, self.b)
         self.lines.move_to([0.,0.,0.])
 
