@@ -10,11 +10,11 @@ class PythagoreanMeans(Scene):
         self.get_lines()
         self.get_arithmetic_mean()
         self.draw_semicircular_arc()
-        # self.get_quadratic_mean()
-        # self.get_geometric_mean()
-        # self.animate_gm_formula()
-        # self.get_harmonic_mean()
-        # self.label_pythagorean_means()
+        self.get_quadratic_mean()
+        self.get_geometric_mean()
+        self.animate_gm_formula()
+        self.get_harmonic_mean()
+        self.label_pythagorean_means()
 
     def get_lines(self):
         self.a = Line([0.,0.,0.], [LINE_LENGTH/(1.+AB_PROPORTION),0.,0.])
