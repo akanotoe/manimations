@@ -2,7 +2,7 @@ from manimlib.imports import *
 
 AB_PROPORTION = 0.25
 LINE_LENGTH = 6
-COMPASS_RUN_TIME = 3
+COMPASS_RUN_TIME = 2
 COMPASS_RATE = linear
 
 class PythagoreanMeans(Scene):
@@ -10,11 +10,11 @@ class PythagoreanMeans(Scene):
         self.get_lines()
         self.get_arithmetic_mean()
         self.draw_semicircular_arc()
-        self.get_quadratic_mean()
-        self.get_geometric_mean()
-        self.animate_gm_formula()
-        self.get_harmonic_mean()
-        self.label_pythagorean_means()
+        # self.get_quadratic_mean()
+        # self.get_geometric_mean()
+        # self.animate_gm_formula()
+        # self.get_harmonic_mean()
+        # self.label_pythagorean_means()
 
     def get_lines(self):
         self.a = Line([0.,0.,0.], [LINE_LENGTH/(1.+AB_PROPORTION),0.,0.])
@@ -77,35 +77,32 @@ class PythagoreanMeans(Scene):
     def draw_semicircular_arc(self):
         tip = Dot(color = YELLOW)
         tip.move_to(self.am_line.get_start())
-        self.semicircle = VMobject()
-        self.semicircle.set_points_as_corners([tip.get_center(), tip.get_center()])
+        self.semicircle = Arc(
+            radius = LINE_LENGTH/2, start_angle = 0, angle=TAU/2
+        ).flip()
 
-        def update_path(path):
-            previous_path = path.copy()
-            previous_path.add_points_as_corners([tip.get_center()])
-            path.become(previous_path)
+        def update_tip(tip):
+            tip.move_to(self.semicircle.get_points()[-1])
+            return tip
 
-        self.semicircle.add_updater(update_path)
+        def update_radius(radius):
+            radius.put_start_and_end_on(
+                self.semicircle.get_points()[-1], ORIGIN
+            )
+            return radius
 
         self.play(FadeIn(tip))
-        self.add(self.semicircle)
         self.play(
-            Rotating(tip, radians = -TAU/2, about_point = ORIGIN,
-                run_time=COMPASS_RUN_TIME, rate_func = COMPASS_RATE),
-            Rotating(self.am_line, radians = -TAU/2, about_point = ORIGIN,
-                run_time=COMPASS_RUN_TIME, rate_func = COMPASS_RATE)
+            ShowCreation(self.semicircle),
+            UpdateFromFunc(tip, update_tip),
+            UpdateFromFunc(self.am_line, update_radius),
+            run_time = COMPASS_RUN_TIME
         )
-        self.semicircle.remove_updater(update_path)
         self.play(FadeOut(tip))
+        self.add(self.semicircle)
         self.play(Rotating(self.am_line, radians = TAU/4,
             about_point = ORIGIN, run_time = 1, rate_func=smooth))
         self.wait()
-
-        # Show semicircle in -ps option
-        self.semicircle = Arc(
-            radius = LINE_LENGTH/2, start_angle = 0, angle=TAU/2
-        )
-        self.add(self.semicircle)
 
     def get_quadratic_mean(self):
         # Setup lines, labels, and braces
