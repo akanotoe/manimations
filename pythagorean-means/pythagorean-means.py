@@ -1,11 +1,11 @@
 from manimlib.imports import *
 
-AB_PROPORTION = 0.25
-LINE_LENGTH = 6
-COMPASS_RUN_TIME = 2
-COMPASS_RATE = linear
-
 class PythagoreanMeans(Scene):
+    CONFIG = {
+        "AB_PROPORTION": 0.25,
+        "LINE_LENGTH": 7,
+        "COMPASS_RUN_TIME": 2,
+    }
     def construct(self):
         self.get_lines()
         self.get_arithmetic_mean()
@@ -17,10 +17,10 @@ class PythagoreanMeans(Scene):
         self.label_pythagorean_means()
 
     def get_lines(self):
-        self.a = Line([0.,0.,0.], [LINE_LENGTH/(1.+AB_PROPORTION),0.,0.])
+        self.a = Line([0.,0.,0.], [self.LINE_LENGTH/(1.+self.AB_PROPORTION),0.,0.])
         self.b = Line(
-            [LINE_LENGTH/(1.+AB_PROPORTION),0.,0.],
-            [LINE_LENGTH,0.,0.]
+            [self.LINE_LENGTH/(1.+self.AB_PROPORTION),0.,0.],
+            [self.LINE_LENGTH,0.,0.]
         )
         self.lines = VGroup(self.a, self.b)
         self.lines.move_to([0.,0.,0.])
@@ -78,7 +78,7 @@ class PythagoreanMeans(Scene):
         tip = Dot(color = YELLOW)
         tip.move_to(self.am_line.get_start())
         self.semicircle = Arc(
-            radius = LINE_LENGTH/2, start_angle = 0, angle=TAU/2
+            radius = self.LINE_LENGTH/2, start_angle = 0, angle=TAU/2
         ).flip()
 
         def update_tip(tip):
@@ -96,7 +96,7 @@ class PythagoreanMeans(Scene):
             ShowCreation(self.semicircle),
             UpdateFromFunc(tip, update_tip),
             UpdateFromFunc(self.am_line, update_radius),
-            run_time = COMPASS_RUN_TIME
+            run_time = self.COMPASS_RUN_TIME
         )
         self.play(FadeOut(tip))
         self.add(self.semicircle)
@@ -327,7 +327,7 @@ class PythagoreanMeans(Scene):
             color=WHITE
         )
         right_angle = RightAngle(intersecting_line, self.radius,
-            length = LINE_LENGTH/32., quadrant = (1,-1)
+            length = self.LINE_LENGTH/32., quadrant = (1,-1)
         )
         self.hm_line = Line(d1.get_center(), self.gm_line.get_end(), color = PINK)
         self.hm_formula = TextMobject('HM', r' = harmonic mean').set_color(PINK)
