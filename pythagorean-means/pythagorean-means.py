@@ -197,16 +197,24 @@ class PythagoreanMeans(Scene):
         self.wait(2)
         qm_final = VGroup(*rhs_final[0][3:])
         square_root_final = VGroup(rhs_final[0][1], rhs_final[0][2])
-        term_copies = VGroup(term_1.copy(), term_2.copy())
+        num_copies = VGroup(term_1[1][0:5].copy(), term_2[1][0:5].copy())
+        denom_copies = VGroup(term_1[1][9:].copy(), term_2[1][9:].copy())
         self.play(
             FadeOut(rhs_intermediate),
-            *[ReplacementTransform(
-                copy, VGroup(*rhs_final[0][3:])
-            ) for copy in term_copies],
+            ApplyMethod(num_copies[1].move_to,
+                VGroup(*rhs_final[0][3:8]).get_center()
+            ),
+            ReplacementTransform(
+                num_copies[0], VGroup(*rhs_final[0][3:8])
+            ),
+            ReplacementTransform(
+                denom_copies, VGroup(*rhs_final[0][8:])
+            ),
             ReplacementTransform(square_roots[1], square_root_final),
             ReplacementTransform(rhs_intermediate[0][0], rhs_final[0][0])
         )
-        self.wait(2)
+        self.play(FadeOut(num_copies[1]))
+        self.wait()
         self.play(ApplyMethod(qm.move_to, self.quad_formula[0].get_center()),
             FadeOut(rhs_final))
         self.play(Write(self.quad_formula[1]))
@@ -230,9 +238,9 @@ class PythagoreanMeans(Scene):
 
     def animate_gm_formula(self):
         # Setup Tex and Text
-        brace_gm = Brace(self.gm_line, LEFT, buff = SMALL_BUFF).set_color(TEAL)
+        brace_gm = Brace(self.gm_line, RIGHT, buff = SMALL_BUFF).set_color(TEAL)
         label_gm = brace_gm.get_tex(r'{\rm GM}').set_color(TEAL)
-        label_gm.bg=BackgroundRectangle(label_gm, fill_opacity=0.8)
+        label_gm.bg=BackgroundRectangle(label_gm, fill_opacity=0.9)
         label_copy = label_gm.copy()
         label_gm_group = VGroup(label_gm.bg, label_gm)
         avg = r'\dfrac{a+b}{2}'
@@ -313,6 +321,11 @@ class PythagoreanMeans(Scene):
         avg = (self.a.get_length() + self.b.get_length())/2
         d1.move_to(self.radius.get_end()/avg*(avg-harmonic_mean))
         intersecting_line = Line(d1.get_center(), self.gm_line.get_start())
+        intersecting_triangle = Polygon(
+            *[point for point in [intersecting_line.get_start_and_end()[0],
+                intersecting_line.get_start_and_end()[1], ORIGIN]],
+            color=WHITE
+        )
         right_angle = RightAngle(intersecting_line, self.radius,
             length = LINE_LENGTH/32., quadrant = (1,-1)
         )
@@ -338,10 +351,13 @@ class PythagoreanMeans(Scene):
         am_denom.set_color(RED_A)
 
         # Animate
-        self.play(ShowCreation(intersecting_line), ShowCreation(right_angle))
+        self.play(
+            ShowCreation(intersecting_triangle),
+            ShowCreation(right_angle)
+        )
         self.wait()
         self.play(ShowCreation(self.hm_line))
-        for item in [self.semicircle, intersecting_line]:
+        for item in [self.semicircle, intersecting_triangle]:
             self.add(item)
         self.wait()
         lines = [self.hm_line, self.gm_line, self.gm_line, self.radius]
