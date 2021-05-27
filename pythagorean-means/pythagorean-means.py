@@ -129,6 +129,7 @@ class PythagoreanMeans(Scene):
         self.play(ReplacementTransform(label_diff, new_label_diff))
         self.wait(2)
         self.play(FadeOut(brace_diff), FadeOut(new_label_diff))
+        self.add(self.semicircle)
 
         # Setup formula animation
         qm_slope = self.qm_line.get_slope()
@@ -224,6 +225,8 @@ class PythagoreanMeans(Scene):
 
         # Animate
         self.play(ShowCreation(self.gm_line))
+        self.add(self.semicircle)
+        [self.add(line) for line in [self.a, self.b]]
         self.wait()
         self.play(ShowCreation(self.radius))
         self.wait()
@@ -341,6 +344,8 @@ class PythagoreanMeans(Scene):
         self.play(ShowCreation(intersecting_line), ShowCreation(right_angle))
         self.wait()
         self.play(ShowCreation(self.hm_line))
+        for item in [self.semicircle, intersecting_line]:
+            self.add(item)
         self.wait()
         lines = [self.hm_line, self.gm_line, self.gm_line, self.radius]
         dests = [HM, gm_denom, gm_num, am_denom]
