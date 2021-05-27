@@ -352,14 +352,13 @@ class PythagoreanMeans(Scene):
 
         # Animate
         self.play(
-            ShowCreation(intersecting_triangle),
+            ShowCreation(intersecting_line),
             ShowCreation(right_angle)
         )
         self.wait()
         self.play(ShowCreation(self.hm_line))
-        for item in [self.semicircle, intersecting_triangle]:
-            self.add(item)
-        self.wait()
+        self.add(self.semicircle)
+        self.play(FadeIn(intersecting_triangle))
         lines = [self.hm_line, self.gm_line, self.gm_line, self.radius]
         dests = [HM, gm_denom, gm_num, am_denom]
         for line, dest in zip(lines, dests):
