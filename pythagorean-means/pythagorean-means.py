@@ -316,7 +316,7 @@ class PythagoreanMeans(Scene):
         d1 = Dot()
         harmonic_mean = 2./(1/self.a.get_length() + 1/self.b.get_length())
         avg = (self.a.get_length() + self.b.get_length())/2
-        d1.move_to(self.radius.get_end()/avg*(avg-harmonic_mean))
+        d1.move_to(self.radius.get_end()*(1.-harmonic_mean/avg))
         intersecting_line = Line(d1.get_center(), self.gm_line.get_start())
         intersecting_triangle = Polygon(
             *[point for point in [intersecting_line.get_start_and_end()[0],
