@@ -277,7 +277,9 @@ class PythagoreanMeans(Scene):
         term_2 = VGroup(VGroup(*[rhs_1[0][i] for i in range(12,20)]),
             VGroup(*[rhs_intermediate[0][i] for i in range(15,26)]))
 
-        self.gm_formula = TextMobject('GM', r' = geometric mean').set_color(TEAL)
+        self.gm_formula = TextMobject(
+            'GM', r' = geometric mean'
+        ).set_color(TEAL)
         self.gm_formula.to_edge(LEFT)
         self.gm_formula.shift(2.75*DOWN + SMALL_BUFF * RIGHT)
 
@@ -326,13 +328,18 @@ class PythagoreanMeans(Scene):
         right_angle = RightAngle(intersecting_line, self.radius,
             length = self.LINE_LENGTH/32., quadrant = (1,-1)
         )
-        self.hm_line = Line(d1.get_center(), self.gm_line.get_end(), color = PINK)
-        self.hm_formula = TextMobject('HM', r' = harmonic mean').set_color(PINK)
+        self.hm_line = Line(d1.get_center(),
+            self.gm_line.get_end(), color = PINK
+        )
+        self.hm_formula = TextMobject(
+            'HM', r' = harmonic mean'
+        ).set_color(PINK)
         self.hm_formula.to_edge(LEFT)
         self.hm_formula.shift(3.5*DOWN + SMALL_BUFF * RIGHT)
 
         prop_form = TexMobject(
-            r'{ {\rm HM} \over {\rm GM} }', '=', r'{ {\rm GM} \over {\rm AM} }'
+            r'{ {\rm HM} \over {\rm GM} }',
+            '=', r'{ {\rm GM} \over {\rm AM} }'
         )
         HM = VGroup(prop_form[0][0], prop_form[0][1])
         gm_denom = VGroup(prop_form[0][-1], prop_form[0][-2])
@@ -360,7 +367,11 @@ class PythagoreanMeans(Scene):
         dests = [HM, gm_denom, gm_num, am_denom]
         for line, dest in zip(lines, dests):
             self.play(ReplacementTransform(line.copy(), dest))
-        self.play(Write(prop_form[0][2]), Write(prop_form[1]), Write(prop_form[2][2]))
+        self.play(
+            Write(prop_form[0][2]),
+            Write(prop_form[1]),
+            Write(prop_form[2][2])
+        )
         self.wait(2)
         self.play(
             ApplyMethod(gm_denom.move_to, gm_num)
@@ -385,13 +396,20 @@ class PythagoreanMeans(Scene):
         self.play(ReplacementTransform(am_denom, denom))
         self.wait()
         denom = VGroup(equals[0][-3], equals[0][-2], equals[0][-1])
-        hm_denom = TexMobject(r'{1 \over a}', '+', r'{1 \over b}').set_color(PINK)
+        hm_denom = TexMobject(
+            r'{1 \over a}', '+', r'{1 \over b}'
+        ).set_color(PINK)
         hm_denom.next_to(equals[0][4], DOWN)
-        self.play(*[ApplyMethod(denom[i].move_to, hm_denom[i][-1]) for i in range(3)])
+        self.play(*[ApplyMethod(
+                denom[i].move_to, hm_denom[i][-1]
+            ) for i in range(3)]
+        )
         self.play(Write(hm_denom), FadeOut(equals[0][2]), FadeOut(equals[0][3]),
             ApplyMethod(equals[0][1].next_to, equals[0][4], UP, buff = 0)
         )
-        self.play(*[ApplyMethod(equals[0][i].set_color, PINK) for i in [0, 1, 4]])
+        self.play(*[ApplyMethod(
+                equals[0][i].set_color, PINK
+            ) for i in [0, 1, 4]])
         self.play(*[FadeOut(denom[i]) for i in range(3)])
         self.wait(2)
         self.play(ApplyMethod(HM.move_to, self.hm_formula[0]),
