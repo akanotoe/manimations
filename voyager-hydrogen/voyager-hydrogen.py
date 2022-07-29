@@ -38,21 +38,23 @@ class VoyagerHydrogen(Scene):
         #     FadeIn(VGroup(h1, spin_down, h2, spin_up, line, one))
         #     )
         self.add(h1, spin_down, h2, spin_up, line, one)
-        self.wait(.75)
         self.play(
             Rotate(spin_up, 180*DEGREES)
             , Rotate(spin_down, 180*DEGREES)
-            , run_time=.5
+            , run_time=.25
             )
         self.wait(.75)
         self.play(
             Rotate(spin_up, -180*DEGREES)
             , Rotate(spin_down, -180*DEGREES)
-            , run_time=.5
+            , run_time=.25
             )
+        self.wait(.75)
 
 class VoyagerHydrogenBW(Scene):
     def construct(self):
+        self.camera.frame_height = 2 * self.camera.frame_height / 3
+        self.camera.frame_width = 2 * self.camera.frame_width / 3
         # Atom 1
         stroke_color = BLACK
         self.camera.background_color = WHITE
@@ -61,7 +63,7 @@ class VoyagerHydrogenBW(Scene):
         spin_up = Line(color=stroke_color).rotate(90*DEGREES)
         spin_up.set_length(radius/3)
         up_circle = Dot(color=stroke_color)
-        up_circle.next_to(spin_up, UP, buff=0.)
+        up_circle.next_to(spin_up, UP, buff=-0.01)
         spin_up = VGroup(up_circle, spin_up)
         spin_down = spin_up.copy()
         spin_down.rotate(180*DEGREES)
@@ -86,15 +88,15 @@ class VoyagerHydrogenBW(Scene):
         #     FadeIn(VGroup(h1, spin_down, h2, spin_up, line, one))
         #     )
         self.add(h1, spin_down, h2, spin_up, line, one)
-        self.wait(.75)
         self.play(
             Rotate(spin_up, 180*DEGREES)
             , Rotate(spin_down, 180*DEGREES)
-            , run_time=.5
+            , run_time=.25
             )
         self.wait(.75)
         self.play(
             Rotate(spin_up, -180*DEGREES)
             , Rotate(spin_down, -180*DEGREES)
-            , run_time=.5
+            , run_time=.25
             )
+        self.wait(.75)
