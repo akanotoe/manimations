@@ -7,5 +7,8 @@ Here you will find my math/physics animations made in [Manim](https://github.com
 ## Fractal Draw
 [<img src="https://raw.githubusercontent.com/akanotoe/manimations/master/fractal-draw/SierpinskiCurveCreation.png" alt="fractal-draw" width="200"/>](https://github.com/akanotoe/manimations/tree/master/fractal-draw)
 
+## Fourier Series Drawings
+[<img src="https://raw.githubusercontent.com/akanotoe/manimations/master/fourier-series/FourierOfGreatLakes.png" alt="fractal-draw" width="200"/>](https://github.com/akanotoe/manimations/tree/master/fourier-series)
+
 ## Voyager Hydrogen
 [<img src="https://raw.githubusercontent.com/akanotoe/manimations/master/voyager-hydrogen/VoyagerHydrogen_ManimCE_v0.16.0.post0.png" alt="voyager-hydrogen" width="200"/>](https://github.com/akanotoe/manimations/tree/master/voyager-hydrogen)
